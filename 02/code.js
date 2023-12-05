@@ -64,9 +64,10 @@ gamesArray.forEach((game, gameNumber) => {
   gamesArray[gameNumber] = gameMaxColours;
 });
 
+// * Part 1
 // * Check which of these games are possible.
 // * Then sum up the possible IDs.
-let answer = 0;
+let partOneAnswer = 0;
 
 gamesArray.forEach((game, gameNumber) => {
   let possibleGame = true;
@@ -76,9 +77,18 @@ gamesArray.forEach((game, gameNumber) => {
     }
   });
   if (possibleGame) {
-    answer += gameNumber + 1;
+    partOneAnswer += gameNumber + 1;
   }
 });
 
+let partTwoAnswer = 0;
+
+// * Part 2
+// * Total the powers of all colours for each game
+gamesArray.forEach((game) => {
+  partTwoAnswer += game.red * game.blue * game.green;
+});
+
 // * Bingo!
-console.log(answer);
+console.log(partOneAnswer);
+console.log(partTwoAnswer);
