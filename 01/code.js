@@ -1,21 +1,8 @@
 // * Read the input.txt
 var fs = require("fs");
-var array = fs.readFileSync("input.txt").toString().split("\n");
+var puzzleInput = fs.readFileSync("input.txt").toString().split("\n");
 
-// var array = [
-//   "two1nine",
-//   "eightwothree",
-//   "abcone2threexyz",
-//   "xtwone3four",
-//   "4nineeightseven2",
-//   "zoneight234",
-//   "7pqrstsixteen",
-// ];
-
-// * Store all the line totals.
-const totals = [];
-
-// * Map of text nums. Index === number.
+// * Array of text nums. Index will equal the integer version.
 const textNums = [
   "zero",
   "one",
@@ -29,56 +16,57 @@ const textNums = [
   "nine",
 ];
 
-// * Num nums cos I am a num num.
-const numNums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+// * Prepare a var to store each line of just numbers
+const linesOfNums = [];
 
-// * Go through each line.
-array.forEach((line) => {
-  // * Store all the numbers.
-  let nums = [];
+puzzleInput.forEach((line, index) => {
+  // * Create a string to contain text chars.
+  let buildString = "";
 
-  // * Store the line total.
-  let totalOfLine = 0;
+  // * Create an array to store the numbers found in each line.
+  const lineNums = [];
+  const lineLength = line.length;
 
-  // * Get all the integers from the line
-  textNums.forEach((textNum, index) => {
-    if (line.includes(textNum)) {
-      const position = line.indexOf(textNum);
-      if (position || position === 0) {
-        nums[position] = textNums.indexOf(textNum);
-      }
+  for (let i = 0; i < lineLength; i++) {
+    const char = line[i];
+
+    if (parseInt(char)) {
+      // * Thar be a number!
+      lineNums.push(parseInt(char));
+    } else {
+      buildString += char;
+
+      textNums.forEach((textNum, index) => {
+        if (buildString.includes(textNum)) {
+          // * Hit a text number.
+          lineNums.push(index);
+          buildString = "";
+
+          // * Go back a step to account for bullshittery like "oneight". Absolute bullshittery.
+          i--;
+        }
+      });
     }
-  });
+  }
 
-  numNums.forEach((numNum, index) => {
-    if (line.includes(numNum)) {
-      const position = line.indexOf(numNum);
-      nums[position] = numNum;
-    }
-  });
+  // * Reset ready for the next line.
+  buildString = "";
 
-  // * Remove any empty values
-  const cleanNums = [];
-  nums.forEach((num) => {
-    if (!numNums.includes(num)) {
-      return;
-    }
-
-    cleanNums.push(num);
-  });
-
-  // * If there are two numbers, concatenate them. Else just concatenate the first number twice.
-  totalOfLine = parseInt(`${cleanNums[0]}${cleanNums[cleanNums.length - 1]}`);
-
-  // * Push up the total we want to summize
-  totals.push(totalOfLine);
+  linesOfNums.push(lineNums);
 });
 
-// * Work out the total.
-let result = 0;
+// * Get the first and last numbers ready to be totalled.
+let totals = [];
 
-for (let i = 0; i < totals.length; i++) {
-  result += totals[i];
-}
+linesOfNums.forEach((line) => {
+  totals.push(parseInt(`${line[0]}${line[line.length - 1]}`));
+});
 
-console.log(result);
+// * Work out the final total, thank fuck.
+let finalTotal = 0;
+
+totals.forEach((total) => {
+  finalTotal += total;
+});
+
+console.log(finalTotal);
