@@ -1,42 +1,74 @@
+// * Read the input.txt
 var fs = require("fs");
 var array = fs.readFileSync("input.txt").toString().split("\n");
+
+// var array = [
+//   "two1nine",
+//   "eightwothree",
+//   "abcone2threexyz",
+//   "xtwone3four",
+//   "4nineeightseven2",
+//   "zoneight234",
+//   "7pqrstsixteen",
+// ];
 
 // * Store all the line totals.
 const totals = [];
 
+// * Map of text nums. Index === number.
+const textNums = [
+  "zero",
+  "one",
+  "two",
+  "three",
+  "four",
+  "five",
+  "six",
+  "seven",
+  "eight",
+  "nine",
+];
+
+// * Num nums cos I am a num num.
+const numNums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
 // * Go through each line.
 array.forEach((line) => {
   // * Store all the numbers.
-  const nums = [];
-
-  // * Store the numbers we're going to use.
-  const numsToSum = [];
+  let nums = [];
 
   // * Store the line total.
   let totalOfLine = 0;
 
   // * Get all the integers from the line
-  Array.from(line).forEach((char) => {
-    if (parseInt(char)) {
-      nums.push(parseInt(char));
+  textNums.forEach((textNum, index) => {
+    if (line.includes(textNum)) {
+      const position = line.indexOf(textNum);
+      if (position || position === 0) {
+        nums[position] = textNums.indexOf(textNum);
+      }
     }
   });
 
-  // * Grab the first and last numbers.
-  const totalNums = nums.length;
-  if (totalNums > 1) {
-    numsToSum.push(nums[0]);
-    numsToSum.push(nums[nums.length - 1]);
-  } else {
-    numsToSum.push(nums[0]);
-  }
+  numNums.forEach((numNum, index) => {
+    if (line.includes(numNum)) {
+      const position = line.indexOf(numNum);
+      nums[position] = numNum;
+    }
+  });
+
+  // * Remove any empty values
+  const cleanNums = [];
+  nums.forEach((num) => {
+    if (!numNums.includes(num)) {
+      return;
+    }
+
+    cleanNums.push(num);
+  });
 
   // * If there are two numbers, concatenate them. Else just concatenate the first number twice.
-  if (numsToSum[1]) {
-    totalOfLine = parseInt(`${numsToSum[0]}${numsToSum[1]}`);
-  } else {
-    totalOfLine = parseInt(`${numsToSum[0]}${numsToSum[0]}`);
-  }
+  totalOfLine = parseInt(`${cleanNums[0]}${cleanNums[cleanNums.length - 1]}`);
 
   // * Push up the total we want to summize
   totals.push(totalOfLine);
@@ -48,3 +80,5 @@ let result = 0;
 for (let i = 0; i < totals.length; i++) {
   result += totals[i];
 }
+
+console.log(result);
